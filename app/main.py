@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+from app.api.alerts import router as alerts_router
+from app.config import settings
+
 
 # Initialize the application
 app = FastAPI(
@@ -14,14 +17,13 @@ async def health_check():
     """
     Health check endpoint to verify the service is operational.
     """
-    return {"status": "ok", "service": "IncidentLens"}
+    return {"status": "ok"}
 
-# ------------------------------------------------------------------------------
-# Router Inclusion
-# ------------------------------------------------------------------------------
-# TODO: Import and include routers once created
-# from app.routers import alerts
-# app.include_router(alerts.router, prefix="/webhook", tags=["Alerts"])
+app.include_router(alerts_router, prefix="/alerts", tags=["Alerts"])
+
+print("OpenAI key loaded:", bool(settings.OPENAI_API_KEY))
+print("Prometheus URL:", settings.PROMETHEUS_URL)
+print("Slack webhook URL loaded:", bool(settings.SLACK_WEBHOOK_URL))
 
 if __name__ == "__main__":
     import uvicorn
